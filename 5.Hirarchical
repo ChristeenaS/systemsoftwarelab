@@ -1,0 +1,105 @@
+#include<string.h>
+#include<stdlib.h>
+#include<stdio.h>
+struct
+{
+char dname[10],fname[10][10];
+int fcnt;
+}dire[10];
+struct dir
+{
+	char dirname[20];
+	struct dir* dirlist;
+	struct fil* filelist;
+	struct dir* next;
+	int num;
+};
+struct fil
+{
+	char fname[20];
+	struct fil* next;
+};
+void hierar(struct dir *temp)
+{
+	printf("Enter number of items in %s : ",temp->dirname);
+	int n,m;
+	char str[20];
+	scanf("%d",&n);
+	temp->num=n;
+	for(int i=0;i<n;i++)
+	{
+		printf("Enter the name of the item in %s : ",temp->dirname);
+		scanf("%s",&str);
+		do{
+			printf("Enter 1 for directory or 2 for file : ");
+			scanf("%d",&m);
+			if(m==2)
+			{
+				struct fil *newf=(struct fil*)malloc(sizeof(struct fil));
+			    strcpy(newf->fname,str);
+			    newf->next=NULL;
+				if(temp->filelist==NULL)
+					temp->filelist=newf;
+				else
+				{
+					struct fil *temp1=temp->filelist;
+					while(temp1->next!=NULL)
+						temp1=temp1->next;
+					temp1->next=newf;
+				}
+			}	
+			else if(m==1)
+			{
+				struct dir *new=(struct dir*)malloc(sizeof(struct dir));
+				strcpy(new->dirname,str);
+				new->filelist=NULL,new->dirlist=NULL,new->next=NULL;
+				if(temp->dirlist==NULL)
+					temp->dirlist=new;
+				else
+				{
+					struct dir *temp1=temp->dirlist;
+					while(temp1->next!=NULL)
+						temp1=temp1->next;
+					temp1->next=new;
+				}
+				hierar(new);
+			}
+			else
+				printf("Wrong Choice.\n");
+		}while(m!=1&&m!=2);			
+	}
+}
+void print2DUtil(struct dir *root, int space) 
+{     
+    if (root == NULL) 
+        return;   
+    space += 10; 
+    print2DUtil(root->dirlist, space);
+    if(root->filelist!=NULL)
+    {
+	struct fil* temp=root->filelist;    			
+        while(temp!=NULL)
+	{    		
+		for(int j=0;j<space;j++)
+    			printf(" ");
+    		printf("%s\n",temp->fname);
+    		temp=temp->next;
+	}  	
+   }
+    for(int j=10;j<space;j++)
+    		printf(" ");
+    printf("%s\n",root->dirname);	
+    print2DUtil(root->next, (space-10)); 
+} 
+
+void main()
+{
+	
+struct dir* root=(struct dir*)malloc(sizeof(struct dir));
+	root->filelist=NULL,root->dirlist=NULL,root->next=NULL;
+	printf("Enter name of directory : ");
+	scanf("%s",&root->dirname);
+	hierar(root);
+	printf("\n");
+	print2DUtil(root,0);		
+}
