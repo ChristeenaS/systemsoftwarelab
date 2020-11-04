@@ -1,0 +1,182 @@
+#include<stdio.h>
+#include<stdlib.h>
+
+int mod(int a);
+int findex(int arr[],int n,int key);
+void sort(int arr[], int n);
+
+int fcfs(int arr[],int n, int head);
+int scan(int n, int head, int maxno, int arr[]);
+int cscan(int n, int head, int maxno, int arr[]);
+
+
+
+int main(){
+    int arr[100];
+    int ch, maxno, n, head, seekt;
+
+    printf("Enter the maximum number of cylinders : ");
+    scanf("%d", &maxno);
+    printf("Enter number of queue elements : ");
+    scanf("%d", &n);
+    printf("Enter the work queue: \n");
+    for (int i = 1; i <= n; i++)
+        scanf("%d", &arr[i]);
+
+    while (1)
+    {
+        printf("1. FCFS\n2. SCAN\n3. C-SCAN\n4. EXIT\nEnter your Choice:  ");
+        scanf("%d", &ch);
+        if(ch!=4){
+        printf("Enter the disk head starting position: ");
+        scanf("%d", &head);
+        }
+    switch (ch)
+        {
+        case 1:
+            seekt=fcfs(arr,n,head);
+            printf("\nTotal seek time : %d\n", seekt);
+            break;
+
+         case 2:
+            seekt=scan(n,head,maxno,arr);
+            printf("\nTotal seek time : %d\n", seekt);
+            break;
+
+        case 3:
+            seekt=cscan(n,head,maxno,arr);
+            printf("\nTotal seek time : %d\n", seekt);
+            break;
+            
+        case 4:
+           exit(0);
+        
+        default:
+            printf("\nEnter a valid choice!!!!! ");
+            continue;
+        }
+    }
+}
+
+
+
+
+int mod(int a)
+{
+    if (a >= 0)
+        return a;
+    else
+        return (-1 * a);
+}
+
+
+int findex(int arr[],int n,int key){
+    for(int i=0;i<=n;i++){
+        if(arr[i]==key){
+            return i;
+        }
+    }
+    return -1;
+}
+
+
+void sort(int arr[], int n) {
+    int i, j, tmp;
+     for(i=0;i<n-1;i++) {
+        for(j=0;j<n-1-i;j++) {
+            if(arr[j]>arr[j+1]) {
+                tmp = arr[j];
+                arr[j] = arr[j+1];
+                arr[j+1] = tmp;
+            }
+        }
+    }
+}
+
+
+
+int fcfs(int arr[],int n, int head){
+    arr[0]=head;
+   int seekt=0;
+    for (int i = 0; i < n; i++){
+        seekt += mod(arr[i] - arr[i+1]);
+        printf("%d \t",arr[i]);
+        }
+    return seekt;
+    }
+
+    
+
+
+int scan(int n, int head, int maxno, int arr[]){
+
+     int srr[100],x,hpos;
+     int n1=n+2;
+     srr[0]=0;
+     srr[n1]=maxno-1;
+     arr[0]=head;     
+     
+     for(x=0;x <= n;x++){
+         srr[x+1]=arr[x];
+     }
+    sort(srr,n1+1);     
+    int seekt=0;
+
+    hpos = findex(srr,n1,head);
+    for(int i=hpos;i>=0;i--){
+        printf("%d  ",srr[i]);
+        if(i!=0)
+        seekt += mod(srr[i] - srr[i - 1]);
+    
+
+    }
+    
+    seekt +=mod(srr[0]-srr[hpos+1]);
+    for(int i=hpos+1;i<n1;i++){
+        printf("%d  ",srr[i]);
+        if(i==(n1-1))
+            break;
+        else
+        seekt += mod(srr[i] - srr[i + 1]);
+    }
+   
+    return seekt;
+}
+
+
+
+
+int cscan(int n, int head, int maxno, int arr[]){
+    
+     int srr[100],x,hpos;
+     int n1=n+2;
+     srr[0]=0;
+     srr[n1]=maxno-1;
+     arr[0]=head;     
+     
+     for(x=0;x <= n;x++){
+         srr[x+1]=arr[x];
+     }
+    sort(srr,n1+1);     
+    int seekt=0;
+
+    hpos = findex(srr,n1,head);
+    for(int i=hpos;i>=0;i--){
+        printf("%d  ",srr[i]);
+        if(i!=0)
+        seekt += mod(srr[i] - srr[i - 1]);
+    
+
+    }
+    
+    seekt +=mod(srr[0]-srr[n1]);
+    for(int i=n1;i>hpos;i--){
+        printf("%d  ",srr[i]);
+        if(i==(hpos+1))
+            break;
+        else
+        seekt += mod(srr[i] - srr[i - 1]);
+    }
+   
+    return seekt;
+}
